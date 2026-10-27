@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Opening Float</title>
+
+  <!-- LOGO / ICONS -->
+  <link rel="icon" type="image/png" href="grape-tree-3.png">
+  <link rel="apple-touch-icon" href="grape-tree-3.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Opening Float">
+  <meta name="theme-color" content="#ffffff">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: #eef2f6;
+      min-height: 100vh;
+      padding: 12px;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .app-container {
+      max-width: 460px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.06);
+      padding: 24px 18px 28px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    /* HEADER */
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .logo-small {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #fff;
+      padding: 3px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #1e293b;
+      letter-spacing: -0.02em;
+    }
+
+    .store-info {
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .store-info strong {
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* FLOAT TABLE */
+    .float-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #f8fafc;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+
+    .float-table tr {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .float-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .float-table td {
+      padding: 9px 8px;
+      font-size: 1rem;
+      vertical-align: middle;
+    }
+
+    .float-label {
+      font-weight: 600;
+      color: #1e293b;
+      width: 48px;
+      font-size: 0.98rem;
+    }
+
+    /* two-part input: pounds | pence */
+    .split-input {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .split-input .part {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .split-input .part.pounds-part { flex: 2; }
+    .split-input .part.pence-part  { flex: 1; }
+
+    .split-input .part-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+      text-align: center;
+    }
+
+    .split-input input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 8px 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      outline: none;
+      text-align: center;
+      transition: border 0.15s, box-shadow 0.15s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .split-input input::-webkit-outer-spin-button,
+    .split-input input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .split-input input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .line-total {
+      font-weight: 700;
+      color: #0f766e;
+      text-align: right;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      width: 66px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* TOTAL ROW */
+    .float-total-row td {
+      background: #ecfdf5;
+      padding: 14px 10px;
+    }
+
+    .float-total-row .total-label {
+      font-weight: 700;
+      color: #065f46;
+      font-size: 1rem;
+    }
+
+    .float-total-row .total-value {
+      font-weight: 800;
+      color: #065f46;
+      text-align: right;
+      font-size: 1.3rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* STATUS PANEL */
+    .status-panel {
+      border-radius: 24px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      border: 1.5px solid;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .status-panel.ok {
+      background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+      border-color: #6ee7b7;
+    }
+
+    .status-panel.bad {
+      background: linear-gradient(145deg, #fef2f2, #fee2e2);
+      border-color: #fca5a5;
+    }
+
+    .status-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .status-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .status-text {
+      flex: 1;
+    }
+
+    .status-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+
+    .status-panel.ok   .status-title { color: #065f46; }
+    .status-panel.bad  .status-title { color: #991b1b; }
+
+    .status-amount {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .status-panel.ok   .status-amount { color: #047857; }
+    .status-panel.bad  .status-amount { color: #b91c1c; }
+
+    .status-detail {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+
+    .status-panel.ok   .status-detail { color: #047857; }
+    .status-panel.bad  .status-detail { color: #991b1b; }
+
+    /* HINTS */
+    .hints {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hint-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #991b1b;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 8px 12px;
+      border-radius: 14px;
+      line-height: 1.35;
+    }
+
+    .hint-row .hint-icon {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+
+    /* ACTIONS */
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 40px;
+      padding: 17px 14px;
+      font-weight: 600;
+      font-size: 1.08rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      text-decoration: none;
+      letter-spacing: 0.2px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: #16a34a;
+      color: white;
+      box-shadow: 0 8px 18px rgba(22, 163, 74, 0.25);
+    }
+    .btn-primary:active { background: #15803d; }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+    .btn-secondary:active { background: #e2e8f0; }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* iPhone small */
+    @media (max-width: 400px) {
+      .float-table td { padding: 7px 6px; }
+      .float-label { width: 42px; font-size: 0.92rem; }
+      .split-input input { font-size: 0.95rem; padding: 7px 4px; }
+      .line-total { width: 58px; font-size: 0.85rem; }
+      .status-amount { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <div class="header-top">
+      <div>
+        <h1>Opening Float</h1>
+      </div>
+      <img src="grape-tree-3.png" alt="Logo" class="logo-small">
+    </div>
+
+    <!-- STORE INFO -->
+    <div class="store-info">
+      Store location: <strong>Hatfield</strong><br>
+      Branch num: <strong>0037</strong>
+    </div>
+
+    <!-- FLOAT GRID -->
+    <div class="section-title"> Build the £100 float</div>
+    <table class="float-table">
+      <tbody id="floatBody">
+        <!-- Rows are generated by JS -->
+      </tbody>
+    </table>
+
+    <!-- STATUS PANEL -->
+    <div class="status-panel ok" id="statusPanel">
+      <div class="status-headline">
+        <span class="status-icon" id="statusIcon">✅</span>
+        <div class="status-text">
+          <div class="status-title" id="statusTitle">Float correct</div>
+          <div class="status-amount" id="statusAmount">£100.00</div>
+        </div>
+      </div>
+      <div class="status-detail" id="statusDetail"></div>
+      <div class="hints" id="hintsContainer"></div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="action-buttons">
+      <a href="closing.html" class="btn btn-primary">← Back to Closing</a>
+      <a href="index.html" class="btn btn-secondary"> Home (Till)</a>
+    </div>
+    <div class="hint">Total updates live · must equal exactly £100.00</div>
+
+  </div>
+
+  <script>
+    (function() {
+      // Each denom: unitPence, default pounds, default pence
+      // Defaults match the paper example: £20:00, £10:40, £5:35, £2:00, £1:16,
+      // 50p:1, 20p:5, 10p:1, 5p:1.50, 2p:0.22, 1p:0.28
+      const DENOMS = [
+        { unitPence: 2000, label: '£20',  defP: '0', defp: '00' },
+        { unitPence: 1000, label: '£10',  defP: '0', defp: '00' },
+        { unitPence: 500,  label: '£5',   defP: '0', defp: '00' },
+        { unitPence: 200,  label: '£2',   defP: '0', defp: '00' },
+        { unitPence: 100,  label: '£1',   defP: '0', defp: '00' },
+        { unitPence: 50,   label: '50p',  defP: '0',  defp: '00' },
+        { unitPence: 20,   label: '20p',  defP: '0',  defp: '00' },
+        { unitPence: 10,   label: '10p',  defP: '0',  defp: '00' },
+        { unitPence: 5,    label: '5p',   defP: '0',  defp: '00' },
+        { unitPence: 2,    label: '2p',   defP: '0', defp: '00' },
+        { unitPence: 1,    label: '1p',   defP: '0', defp: '00' },
+      ];
+
+      const TARGET_PENCE = 10000; // £100
+
+      const floatBody      = document.getElementById('floatBody');
+      const statusPanel    = document.getElementById('statusPanel');
+      const statusIcon     = document.getElementById('statusIcon');
+      const statusTitle    = document.getElementById('statusTitle');
+      const statusAmount   = document.getElementById('statusAmount');
+      const statusDetail   = document.getElementById('statusDetail');
+      const hintsContainer = document.getElementById('hintsContainer');
+
+      // Build rows
+      const inputs = []; // { poundsEl, penceEl, unitPence, label, lineEl }
+      DENOMS.forEach((d, i) => {
+        const tr = document.createElement('tr');
+
+        // label
+        const tdLabel = document.createElement('td');
+        tdLabel.className = 'float-label';
+        tdLabel.textContent = d.label;
+        tr.appendChild(tdLabel);
+
+        // split input
+        const tdInput = document.createElement('td');
+        const split = document.createElement('div');
+        split.className = 'split-input';
+
+        // pounds part
+        const poundsPart = document.createElement('div');
+        poundsPart.className = 'part pounds-part';
+        const poundsLbl = document.createElement('div');
+        poundsLbl.className = 'part-label';
+        poundsLbl.textContent = '£';
+        const poundsIn = document.createElement('input');
+        poundsIn.type = 'number';
+        poundsIn.min = '0';
+        poundsIn.step = '1';
+        poundsIn.inputMode = 'numeric';
+        poundsIn.placeholder = '0';
+        poundsIn.value = d.defP;
+        poundsPart.appendChild(poundsLbl);
+        poundsPart.appendChild(poundsIn);
+
+        // pence part
+        const pencePart = document.createElement('div');
+        pencePart.className = 'part pence-part';
+        const penceLbl = document.createElement('div');
+        penceLbl.className = 'part-label';
+        penceLbl.textContent = 'p';
+        const penceIn = document.createElement('input');
+        penceIn.type = 'number';
+        penceIn.min = '0';
+        penceIn.max = '99';
+        penceIn.step = '1';
+        penceIn.inputMode = 'numeric';
+        penceIn.placeholder = '00';
+        penceIn.value = d.defp;
+        pencePart.appendChild(penceLbl);
+        pencePart.appendChild(penceIn);
+
+        split.appendChild(poundsPart);
+        split.appendChild(pencePart);
+        tdInput.appendChild(split);
+        tr.appendChild(tdInput);
+
+        // line total
+        const tdLine = document.createElement('td');
+        tdLine.className = 'line-total';
+        tdLine.textContent = '£0.00';
+        tr.appendChild(tdLine);
+
+        floatBody.appendChild(tr);
+
+        inputs.push({
+          poundsEl: poundsIn,
+          penceEl: penceIn,
+          unitPence: d.unitPence,
+          label: d.label,
+          lineEl: tdLine,
+        });
+      });
+
+      // Total row
+      const totalTr = document.createElement('tr');
+      totalTr.className = 'float-total-row';
+      const totalLbl = document.createElement('td');
+      totalLbl.colSpan = 2;
+      totalLbl.className = 'total-label';
+      totalLbl.textContent = 'Total';
+      const totalVal = document.createElement('td');
+      totalVal.className = 'total-value';
+      totalVal.id = 'floatTotalValue';
+      totalVal.textContent = '£0.00';
+      totalTr.appendChild(totalLbl);
+      totalTr.appendChild(totalVal);
+      floatBody.appendChild(totalTr);
+
+      function formatPence(pence) {
+        const sign = pence < 0 ? '-' : '';
+        const abs = Math.abs(pence);
+        return sign + '£' + (abs / 100).toFixed(2);
+      }
+
+      // Sum a row into pence based on its £ + pence entries.
+      // IMPORTANT: for notes (£20, £10, £5, £2, £1) the "pence" column
+      // represents additional pounds, matching the paper layout (£10: 40|00 = £40).
+      // For coins (50p and below) the pounds column is the count of that coin,
+      // and the pence column adds on top of that value.
+      function rowPence(row) {
+        const poundsVal = parseFloat(row.poundsEl.value) || 0;
+        const penceVal  = parseFloat(row.penceEl.value) || 0;
+
+        if (row.unitPence >= 100) {
+          // Note: pounds column = pounds, pence column = also pounds-ish (used as "00")
+          // Paper format: £10 | 40 | 00  → £40.00
+          const totalPounds = poundsVal + (penceVal / 100);
+          return Math.round(totalPounds * 100);
+        } else {
+          // Coin: pounds column = count of coin, pence column = pence value
+          // Paper format: 5p | 1 | 50 → £1.50 (1 × 5p note-style display in paper is
+          // actually a count "1", plus 50p)  — but the paper total row for 5p shows
+          // "1 | 50" = £1.50 total. So treat pounds as count of the coin and pence as
+          // a small extra pence amount.
+          // However the paper example is really just showing £1.50 in 5p coins.
+          // To match the paper, use: value = count * unitPence + penceVal (in pence)
+          // where count = poundsVal.
+          // BUT for 5p: 1 * 5p = 5p + 50p = 55p? That's not £1.50.
+          // The paper is showing £1.50 in 5p coins → 30 coins of 5p.
+          // The paper's 2-column layout for coins is count | extra-pence, but the
+          // meaning is: coins = pounds*100 + pence in *pence units*? Let's reread:
+          // 5p | 1 | 50 → this is £1.50. 1.50 / 0.05 = 30 coins.
+          // 2p | 00 | 22 → £0.22.  22 / 0.02 = 11 coins.
+          // 1p | 00 | 28 → £0.28.  28 / 0.01 = 28 coins.
+          // So for coins: value in pence = (poundsVal*100 + penceVal) is WRONG
+          // because 5p: (1*100 + 50) = 150p = £1.50 ✓
+          // 2p: (0*100 + 22) = 22p = £0.22 ✓
+          // 1p: (0*100 + 28) = 28p = £0.28 ✓
+          // 50p: (1*100 + 0) = 100p = £1.00 (paper shows £1.00 in 50p coins = 2 coins) ✓
+          // 20p: (5*100 + 0) = 500p = £5.00 (paper: £5 in 20p = 25 coins) ✓
+          // 10p: (1*100 + 0) = 100p = £1.00 (paper: £1 in 10p = 10 coins) ✓
+          // So coins: value in pence = poundsVal*100 + penceVal.
+          // And the COUNT of physical coins = (poundsVal*100 + penceVal) / unitPence.
+          const valuePence = Math.round(poundsVal * 100 + penceVal);
+          return valuePence;
+        }
+      }
+
+      // The count of physical coins/notes for display isn't strictly needed here,
+      // but useful for hints. Notes: totalPence / unitPence. Coins: valuePence / unitPence.
+      function physicalCount(row, valuePence) {
+        if (row.unitPence <= 0) return 0;
+        return Math.floor(valuePence / row.unitPence);
+      }
+
+      function recalculate() {
+        let total = 0;
+        const rowData = [];
+
+        inputs.forEach(row => {
+          const pence = rowPence(row);
+          row.lineEl.textContent = formatPence(pence);
+          total += pence;
+          rowData.push({ row, pence });
+        });
+
+        totalVal.textContent = formatPence(total);
+
+        // Status
+        const diff = total - TARGET_PENCE;
+
+        if (diff === 0) {
+          statusPanel.className = 'status-panel ok';
+          statusIcon.textContent = '✅';
+          statusTitle.textContent = 'Float correct';
+          statusAmount.textContent = '£100.00';
+          statusDetail.textContent = 'Perfect — the float matches £100.00 exactly.';
+          hintsContainer.innerHTML = '';
+        } else {
+          statusPanel.className = 'status-panel bad';
+          statusIcon.textContent = '⚠️';
+          statusTitle.textContent = diff > 0 ? 'Over £100' : 'Under £100';
+          statusAmount.textContent = formatPence(total);
+
+          const absDiff = Math.abs(diff);
+          const dirText  = diff > 0 ? 'over' : 'under';
+          statusDetail.textContent = `You are ${formatPence(absDiff)} ${dirText} the £100 target.`;
+
+          // Build smart hints
+          const hints = buildHints(rowData, diff);
+          hintsContainer.innerHTML = '';
+          hints.forEach(h => {
+            const div = document.createElement('div');
+            div.className = 'hint-row';
+            div.innerHTML = `<span class="hint-icon">💡</span><span>${h}</span>`;
+            hintsContainer.appendChild(div);
+          });
+        }
+      }
+
+      // Generate helpful hints about where the count may be off
+      function buildHints(rowData, diff) {
+        const hints = [];
+        const absDiff = Math.abs(diff);
+
+        // 1) If the difference exactly matches a single denomination, suggest it
+        const matchedDenom = DENOMS.find(d => d.unitPence === absDiff);
+        if (matchedDenom) {
+          hints.push(
+            `Looks like you may be ${diff > 0 ? 'one extra' : 'one missing'} <strong>${matchedDenom.label}</strong> ` +
+            `(${formatPence(absDiff)}).`
+          );
+        }
+
+        // 2) If diff is a small multiple of a coin/note, mention it
+        if (!matchedDenom) {
+          for (const d of DENOMS) {
+            if (absDiff % d.unitPence === 0 && absDiff >= d.unitPence) {
+              const n = absDiff / d.unitPence;
+              if (n >= 2 && n <= 10 && d.unitPence <= 200) {
+                hints.push(
+                  `That's ${n} × ${d.label} (${formatPence(absDiff)}). Check your ${d.label} count.`
+                );
+                break;
+              }
+            }
+          }
+        }
+
+        // 3) If a denomination's typed value is not an exact multiple of its unit,
+        //    it might be a typo (e.g. 22 in "pence" column of 2p means £0.22 which is fine,
+        //    but 25 in 2p pence column = 25p which is impossible with 2p coins → hint).
+        rowData.forEach(({ row, pence }) => {
+          if (row.unitPence > 0 && pence > 0 && pence % row.unitPence !== 0) {
+            hints.push(
+              `Your <strong>${row.label}</strong> amount (${formatPence(pence)}) is not a whole number of ${row.label} ` +
+              `— check that entry.`
+            );
+          }
+        });
+
+        // 4) Big over/under note
+        if (hints.length === 0) {
+          if (diff > 0) {
+            hints.push('Double-check you haven\'t added a note or coin by mistake.');
+          } else {
+            hints.push('Double-check you haven\'t missed a note or coin.');
+          }
+        }
+
+        return hints;
+      }
+
+      // Attach input listeners
+      inputs.forEach(row => {
+        row.poundsEl.addEventListener('input', recalculate);
+        row.penceEl.addEventListener('input', recalculate);
+        row.poundsEl.addEventListener('blur', function() {
+          const v = parseInt(this.value, 10);
+          if (!isNaN(v) && v >= 0) this.value = v; else this.value = '';
+          recalculate();
+        });
+        row.penceEl.addEventListener('blur', function() {
+          const v = parseInt(this.value, 10);
+          if (!isNaN(v) && v >= 0 && v <= 99) this.value = (v < 10 ? '0' + v : v);
+          else this.value = '';
+          recalculate();
+        });
+      });
+
+      // Prevent double-tap zoom
+      document.querySelectorAll('a, button, input').forEach(el => {
+        el.addEventListener('touchstart', () => {}, { passive: true });
+      });
+
+      // Initial calc
+      recalculate();
+    })();
+  </script>
+</body>
+</html>

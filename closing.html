@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>End of Day Till Check</title>
+
+  <!-- LOGO / ICONS (replace grape-tree-1.png with your new filename) -->
+  <link rel="icon" type="image/png" href="grape-tree-3.png">
+  <link rel="apple-touch-icon" href="grape-tree-3.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Till Closing">
+  <meta name="theme-color" content="#ffffff">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: #eef2f6;
+      min-height: 100vh;
+      padding: 12px;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .app-container {
+      max-width: 460px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.06);
+      padding: 24px 18px 28px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    /* HEADER */
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .logo-small {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #fff;
+      padding: 3px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #1e293b;
+      letter-spacing: -0.02em;
+    }
+
+    .store-info {
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .store-info strong {
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* DENOMINATION GRID */
+    .denom-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #f8fafc;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+
+    .denom-table tr {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .denom-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .denom-table td {
+      padding: 9px 10px;
+      font-size: 1rem;
+      vertical-align: middle;
+    }
+
+    .denom-label {
+      font-weight: 600;
+      color: #1e293b;
+      width: 70px;
+      font-size: 1rem;
+    }
+
+    .denom-table input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #0f172a;
+      outline: none;
+      text-align: right;
+      transition: border 0.15s, box-shadow 0.15s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .denom-table input::-webkit-outer-spin-button,
+    .denom-table input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .denom-table input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .denom-total {
+      font-weight: 700;
+      color: #0f766e;
+      text-align: right;
+      font-size: 1.1rem;
+      white-space: nowrap;
+    }
+
+    /* SUBTOTAL ROW (filled state) */
+    .subtotal-row td {
+      background: #ecfdf5;
+      padding: 12px 10px;
+    }
+
+    .subtotal-label {
+      font-weight: 700;
+      color: #065f46;
+      font-size: 1rem;
+    }
+
+    .subtotal-value {
+      font-weight: 800;
+      color: #065f46;
+      text-align: right;
+      font-size: 1.25rem;
+    }
+
+    /* SECTION DIVIDER LABEL */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    /* SMALL ROWS (loyalty, card, float) */
+    .small-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #f8fafc;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+
+    .small-table tr {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .small-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .small-table td {
+      padding: 11px 12px;
+      font-size: 1rem;
+      vertical-align: middle;
+    }
+
+    .small-label {
+      font-weight: 500;
+      color: #334155;
+      font-size: 0.98rem;
+    }
+
+    .small-table input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #0f172a;
+      outline: none;
+      text-align: right;
+      transition: border 0.15s, box-shadow 0.15s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .small-table input::-webkit-outer-spin-button,
+    .small-table input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .small-table input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .small-table input[readonly] {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    /* FIXED £100 FLOAT — two-column display */
+    .float-display {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .float-display .pounds,
+    .float-display .pence {
+      background: #f1f5f9;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #475569;
+      text-align: center;
+      min-width: 56px;
+    }
+
+    .float-display .pounds {
+      flex: 2;
+    }
+
+    .float-display .pence {
+      flex: 1;
+    }
+
+    /* TOTALS SECTION (highlighted) */
+    .totals-section {
+      background: linear-gradient(145deg, #eff6ff, #dbeafe);
+      border-radius: 24px;
+      padding: 18px 18px 20px;
+      border: 1px solid #bfdbfe;
+      margin-bottom: 18px;
+    }
+
+    .totals-section .totals-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1e40af;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed #bfdbfe;
+    }
+
+    .total-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-top: 6px;
+      padding-top: 12px;
+      border-top: 2px solid #93c5fd;
+    }
+
+    .total-row .t-label {
+      font-weight: 500;
+      color: #1e3a8a;
+      font-size: 0.98rem;
+    }
+
+    .total-row .t-value {
+      font-weight: 700;
+      color: #1e3a8a;
+      font-size: 1.15rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .total-row.grand .t-label {
+      font-weight: 800;
+      color: #1e3a8a;
+      font-size: 1.05rem;
+    }
+
+    .total-row.grand .t-value {
+      font-weight: 900;
+      color: #065f46;
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
+    }
+
+    /* ACTIONS */
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 40px;
+      padding: 17px 14px;
+      font-weight: 600;
+      font-size: 1.08rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      text-decoration: none;
+      letter-spacing: 0.2px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: #16a34a;
+      color: white;
+      box-shadow: 0 8px 18px rgba(22, 163, 74, 0.25);
+    }
+
+    .btn-primary:active {
+      background: #15803d;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:active {
+      background: #e2e8f0;
+    }
+	
+	.denom-input-cell {
+  width: 34%;
+}
+
+.denom-label {
+  font-weight: 600;
+  color: #1e293b;
+  width: 56px;
+  font-size: 1rem;
+}
+
+.denom-count {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+  padding: 0 4px;
+  width: 48px;
+  font-variant-numeric: tabular-nums;
+}
+
+.denom-count span {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* CASH BANKING SECTION */
+.banking-section {
+  background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+  border-radius: 24px;
+  padding: 18px 18px 18px;
+  border: 1px solid #6ee7b7;
+  margin-bottom: 18px;
+}
+
+.banking-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #065f46;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.banking-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #6ee7b7;
+}
+
+.banking-row:last-child {
+  border-bottom: none;
+}
+
+.b-label {
+  font-weight: 500;
+  color: #065f46;
+  font-size: 0.98rem;
+}
+
+.b-value {
+  font-weight: 700;
+  color: #065f46;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.b-value.b-minus {
+  color: #b45309;
+}
+
+.banking-total {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 2px solid #34d399;
+}
+
+.banking-total .b-label {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.banking-total .b-value.b-total {
+  font-weight: 900;
+  font-size: 1.7rem;
+  color: #047857;
+  letter-spacing: -0.02em;
+}
+
+/* AMOUNT TO BANK BREAKDOWN */
+.breakdown-section {
+  background: linear-gradient(145deg, #fefce8, #fef9c3);
+  border-radius: 24px;
+  padding: 18px 16px 16px;
+  border: 1px solid #fde047;
+  margin-bottom: 18px;
+}
+
+.breakdown-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #854d0e;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.breakdown-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #fef08a;
+  font-size: 0.9rem;
+}
+
+.breakdown-table thead th {
+  background: #fef9c3;
+  color: #854d0e;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 6px;
+  text-align: left;
+  border-bottom: 1px solid #fde047;
+}
+
+.breakdown-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #fef9c3;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.breakdown-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bd-denom {
+  font-weight: 700;
+  color: #1e293b;
+  width: 54px;
+}
+
+.bd-use {
+  text-align: center;
+  font-weight: 700;
+  color: #a16207;
+  width: 52px;
+}
+
+.bd-use .bd-x {
+  font-weight: 500;
+  color: #a1a1aa;
+  font-size: 0.75rem;
+  margin-left: 2px;
+}
+
+.bd-subtotal {
+  text-align: right;
+  color: #713f12;
+  font-weight: 600;
+  width: 72px;
+}
+
+.bd-running {
+  text-align: right;
+  color: #0f766e;
+  font-weight: 600;
+  width: 72px;
+}
+
+.bd-zero {
+  opacity: 0.35;
+}
+
+/* final total row */
+.breakdown-table tfoot td {
+  background: #fef9c3;
+  border-top: 2px solid #facc15;
+  padding: 10px 8px;
+  font-weight: 800;
+}
+
+.bd-final-label {
+  color: #854d0e;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bd-final-value {
+  text-align: right;
+  color: #713f12;
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bd-note {
+  font-size: 0.8rem;
+  color: #a16207;
+  font-weight: 500;
+  margin-top: 10px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.bd-note.warn {
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+    /* Small helper text */
+    .hint {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <div class="header-top">
+      <div>
+        <h1>End of Day Till Check</h1>
+      </div>
+      <img src="grape-tree-3.png" alt="Logo" class="logo-small">
+    </div>
+
+    <!-- STORE INFO -->
+    <div class="store-info">
+      Store location: <strong>Hatfield</strong><br>
+      Branch num: <strong>0037</strong>
+    </div>
+
+    <!-- DENOMINATIONS -->
+    <div class="section-title"> Cash Count</div>
+    <table class="denom-table">
+  <tbody>
+    <tr>
+      <td class="denom-label">£20</td>
+      <td class="denom-input-cell"><input type="number" id="val20" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count20">0</span> ×</td>
+      <td class="denom-total" id="total20">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">£10</td>
+      <td class="denom-input-cell"><input type="number" id="val10" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count10">0</span> ×</td>
+      <td class="denom-total" id="total10">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">£5</td>
+      <td class="denom-input-cell"><input type="number" id="val5" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count5">0</span> ×</td>
+      <td class="denom-total" id="total5">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">£2</td>
+      <td class="denom-input-cell"><input type="number" id="val2" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count2">0</span> ×</td>
+      <td class="denom-total" id="total2">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">£1</td>
+      <td class="denom-input-cell"><input type="number" id="val1" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count1">0</span> ×</td>
+      <td class="denom-total" id="total1">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">50p</td>
+      <td class="denom-input-cell"><input type="number" id="val50p" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count50p">0</span> ×</td>
+      <td class="denom-total" id="total50p">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">20p</td>
+      <td class="denom-input-cell"><input type="number" id="val20p" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count20p">0</span> ×</td>
+      <td class="denom-total" id="total20p">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">10p</td>
+      <td class="denom-input-cell"><input type="number" id="val10p" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count10p">0</span> ×</td>
+      <td class="denom-total" id="total10p">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">5p</td>
+      <td class="denom-input-cell"><input type="number" id="val5p" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count5p">0</span> ×</td>
+      <td class="denom-total" id="total5p">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">2p</td>
+      <td class="denom-input-cell"><input type="number" id="val2p" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count2p">0</span> ×</td>
+      <td class="denom-total" id="total2p">£0.00</td>
+    </tr>
+    <tr>
+      <td class="denom-label">1p</td>
+      <td class="denom-input-cell"><input type="number" id="val1p" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+      <td class="denom-count"><span id="count1p">0</span> ×</td>
+      <td class="denom-total" id="total1p">£0.00</td>
+    </tr>
+    <tr class="subtotal-row">
+      <td colspan="3" class="subtotal-label">TOTAL CASH (A)</td>
+      <td class="subtotal-value" id="totalCashA">£0.00</td>
+    </tr>
+  </tbody>
+</table>
+
+    <!-- OTHER PAYMENTS -->
+    <div class="section-divider">Other Payments</div>
+    <table class="small-table">
+      <tbody>
+        <tr>
+          <td class="small-label">Loyalty</td>
+          <td style="width: 48%;"><input type="number" id="loyalty" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+        </tr>
+        <tr>
+          <td class="small-label">Gift card / Voucher</td>
+          <td style="width: 48%;"><input type="number" id="giftCard" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-divider">Card Payments</div>
+    <table class="small-table">
+      <tbody>
+        <tr>
+          <td class="small-label">Credit card</td>
+          <td style="width: 48%;"><input type="number" id="creditCard" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- OPENING FLOAT -->
+    <div class="section-divider">Opening Float (B)</div>
+    <table class="small-table">
+      <tbody>
+        <tr>
+          <td class="small-label">Minus opening float</td>
+          <td style="width: 48%;">
+            <div class="float-display">
+              <span class="pounds">100</span>
+              <span class="pence">00</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- TOTALS -->
+    <div class="totals-section">
+      <div class="totals-title">Summary</div>
+      <div class="total-row">
+        <span class="t-label">Total cash (A)</span>
+        <span class="t-value" id="sumCashA">£0.00</span>
+      </div>
+      <div class="total-row">
+        <span class="t-label">Loyalty + Gift card</span>
+        <span class="t-value" id="sumLoyaltyGift">£0.00</span>
+      </div>
+      <div class="total-row">
+        <span class="t-label">Credit card</span>
+        <span class="t-value" id="sumCredit">£0.00</span>
+      </div>
+      <div class="total-row">
+        <span class="t-label">Opening float (B)</span>
+        <span class="t-value" id="sumFloat">-£100.00</span>
+      </div>
+      <div class="total-row grand">
+        <span class="t-label">Total takings (D)</span>
+        <span class="t-value" id="sumTotalD">£0.00</span>
+      </div>
+    </div>
+	
+	    <!-- CASH BANKING -->
+    <div class="banking-section">
+      <div class="banking-title"> Cash Banking</div>
+      <div class="banking-row">
+        <span class="b-label">Cash (A)</span>
+        <span class="b-value" id="bankCashA">£0.00</span>
+      </div>
+      <div class="banking-row">
+        <span class="b-label">Minus Float (B)</span>
+        <span class="b-value b-minus" id="bankFloat">-£100.00</span>
+      </div>
+      <div class="banking-row banking-total">
+        <span class="b-label">Amount to Bank</span>
+        <span class="b-value b-total" id="bankAmount">£0.00</span>
+      </div>
+    </div>
+	
+	    <!-- AMOUNT TO BANK BREAKDOWN -->
+    <div class="breakdown-section" id="breakdownSection">
+      <div class="breakdown-title"> Amount to Bank Calculation</div>
+      <table class="breakdown-table">
+        <thead>
+          <tr>
+            <th class="bd-denom">Denom</th>
+            <th class="bd-use">Use</th>
+            <th class="bd-subtotal">Subtotal</th>
+            <th class="bd-running">Running</th>
+          </tr>
+        </thead>
+        <tbody id="breakdownBody">
+          <!-- rows generated by JS -->
+        </tbody>
+        <tfoot>
+          <tr class="bd-final-row">
+            <td colspan="3" class="bd-final-label">Total</td>
+            <td class="bd-final-value" id="bdFinalValue">£0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="bd-note" id="bdNote"></div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="action-buttons">
+      <a href="opening.html" class="btn btn-primary"> Opening Float</a>
+      <a href="index.html" class="btn btn-secondary">← Back to Till</a>
+    </div>
+    <div class="hint">All totals update automatically as you type</div>
+
+  </div>
+
+  <script>
+  (function() {
+    // Each denom: input id, count badge id, line total id, value in pence
+    const DENOMS = [
+      { id: 'val20',  countId: 'count20',  totalId: 'total20',  unitPence: 2000 },
+      { id: 'val10',  countId: 'count10',  totalId: 'total10',  unitPence: 1000 },
+      { id: 'val5',   countId: 'count5',   totalId: 'total5',   unitPence: 500  },
+      { id: 'val2',   countId: 'count2',   totalId: 'total2',   unitPence: 200  },
+      { id: 'val1',   countId: 'count1',   totalId: 'total1',   unitPence: 100  },
+      { id: 'val50p', countId: 'count50p', totalId: 'total50p', unitPence: 50   },
+      { id: 'val20p', countId: 'count20p', totalId: 'total20p', unitPence: 20   },
+      { id: 'val10p', countId: 'count10p', totalId: 'total10p', unitPence: 10   },
+      { id: 'val5p',  countId: 'count5p',  totalId: 'total5p',  unitPence: 5    },
+      { id: 'val2p',  countId: 'count2p',  totalId: 'total2p',  unitPence: 2    },
+      { id: 'val1p',  countId: 'count1p',  totalId: 'total1p',  unitPence: 1    },
+    ];
+
+    const OPENING_FLOAT_PENCE = 10000; // £100
+	
+	const bankCashAEl = document.getElementById('bankCashA');
+	const bankFloatEl = document.getElementById('bankFloat');
+	const bankAmountEl = document.getElementById('bankAmount');
+
+    const totalCashAEl = document.getElementById('totalCashA');
+    const sumCashAEl   = document.getElementById('sumCashA');
+    const sumLoyaltyGiftEl = document.getElementById('sumLoyaltyGift');
+    const sumCreditEl  = document.getElementById('sumCredit');
+    const sumFloatEl   = document.getElementById('sumFloat');
+    const sumTotalDEl  = document.getElementById('sumTotalD');
+
+    const loyaltyEl  = document.getElementById('loyalty');
+    const giftCardEl = document.getElementById('giftCard');
+    const creditCardEl = document.getElementById('creditCard');
+	
+	const breakdownBody = document.getElementById('breakdownBody');
+	const bdFinalValue = document.getElementById('bdFinalValue');
+	const bdNote = document.getElementById('bdNote');
+
+    function formatPence(pence) {
+      const sign = pence < 0 ? '-' : '';
+      const abs = Math.abs(pence);
+      return sign + '£' + (abs / 100).toFixed(2);
+    }
+
+    function recalculate() {
+      // --- Cash denominations ---
+      let totalPence = 0;
+
+      DENOMS.forEach(d => {
+        const inputEl  = document.getElementById(d.id);
+        const countEl  = document.getElementById(d.countId);
+        const totalEl  = document.getElementById(d.totalId);
+
+        // Value typed by user is in £ (e.g. 80, 0.50)
+        const rawValue = parseFloat(inputEl.value);
+        const valuePence = (!isNaN(rawValue) && rawValue > 0)
+          ? Math.round(rawValue * 100)
+          : 0;
+
+        // How many notes/coins does this value represent?
+        const count = valuePence > 0 ? Math.floor(valuePence / d.unitPence) : 0;
+
+        // A line total equals the value entered (since user types the £ value)
+        totalPence += valuePence;
+
+        countEl.textContent = count;
+        totalEl.textContent = formatPence(valuePence);
+      }
+	        
+	  );
+
+      // Total cash (A)
+      totalCashAEl.textContent = formatPence(totalPence);
+      sumCashAEl.textContent   = formatPence(totalPence);
+
+      // --- Other payments ---
+      const loyaltyPence = Math.round((parseFloat(loyaltyEl.value)  || 0) * 100);
+      const giftPence    = Math.round((parseFloat(giftCardEl.value) || 0) * 100);
+      const creditPence  = Math.round((parseFloat(creditCardEl.value) || 0) * 100);
+
+      sumLoyaltyGiftEl.textContent = formatPence(loyaltyPence + giftPence);
+      sumCreditEl.textContent      = formatPence(creditPence);
+      sumFloatEl.textContent       = formatPence(-OPENING_FLOAT_PENCE);
+
+            // --- Grand total (D) ---
+      // D = total cash(A) + loyalty + gift + credit - opening float(B)
+      const dPence = totalPence + loyaltyPence + giftPence + creditPence - OPENING_FLOAT_PENCE;
+      sumTotalDEl.textContent = formatPence(dPence);
+
+      // --- Cash Banking ---
+      bankCashAEl.textContent  = formatPence(totalPence);
+      bankFloatEl.textContent  = formatPence(-OPENING_FLOAT_PENCE);
+      bankAmountEl.textContent = formatPence(totalPence - OPENING_FLOAT_PENCE);
+    
+	      // --- Amount to Bank Breakdown ---
+      renderBreakdown(totalPence - OPENING_FLOAT_PENCE);
+	
+	}
+	
+	      // Physical counts per denomination, computed from what's been entered
+      function getDenomCounts() {
+        const counts = {};
+        DENOMS.forEach(d => {
+          const inputEl = document.getElementById(d.id);
+          const raw = parseFloat(inputEl.value);
+          const valuePence = (!isNaN(raw) && raw > 0) ? Math.round(raw * 100) : 0;
+          counts[d.unitPence] = Math.floor(valuePence / d.unitPence);
+        });
+        return counts;
+      }
+
+      // Break down `targetPence` into notes/coins using largest denominations first,
+      // limited by what the user physically has in each denom.
+      function renderBreakdown(targetPence) {
+        const counts = getDenomCounts();
+        const breakdownOrder = [
+          2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1
+        ];
+        const labelMap = {
+          2000: '£20', 1000: '£10', 500: '£5', 200: '£2', 100: '£1',
+          50: '50p', 20: '20p', 10: '10p', 5: '5p', 2: '2p', 1: '1p',
+        };
+
+        let remaining = Math.max(0, targetPence);
+        let running = 0;
+
+        // build rows only for denoms used + row for any leftover
+        breakdownBody.innerHTML = '';
+
+        const rows = [];
+        breakdownOrder.forEach(unit => {
+          const available = counts[unit] || 0;
+          const need = Math.floor(remaining / unit);
+          const use = Math.min(need, available);
+
+          if (use > 0) {
+            const subtotal = use * unit;
+            remaining -= subtotal;
+            running += subtotal;
+            rows.push({ unit, use, subtotal, running });
+          }
+        });
+
+        // If nothing to bank, show a gentle row
+        if (rows.length === 0 && targetPence === 0) {
+          rows.push({ unit: 0, use: 0, subtotal: 0, running: 0 });
+        }
+
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="bd-denom">${r.unit === 0 ? '—' : labelMap[r.unit]}</td>
+            <td class="bd-use">${r.use}<span class="bd-x">×</span></td>
+            <td class="bd-subtotal">${formatPence(r.subtotal)}</td>
+            <td class="bd-running">${formatPence(r.running)}</td>
+          `;
+          breakdownBody.appendChild(tr);
+        });
+
+        // Total row reflects what was actually made up
+        bdFinalValue.textContent = formatPence(running);
+
+        // Note about leftover
+        if (remaining > 0) {
+          bdNote.classList.add('warn');
+          bdNote.innerHTML = `⚠️ ${formatPence(remaining)} could not be made up from your current cash — ` +
+            `you may be short of the right notes/coins.`;
+        } else if (targetPence === 0) {
+          bdNote.classList.remove('warn');
+          bdNote.textContent = 'Nothing to bank yet — no cash entered.';
+        } else {
+          bdNote.classList.remove('warn');
+          bdNote.textContent = 'Using largest notes & coins first.';
+        }
+      }
+
+    // Attach listeners
+    const allInputs = [
+      ...DENOMS.map(d => document.getElementById(d.id)),
+      loyaltyEl, giftCardEl, creditCardEl,
+    ];
+    allInputs.forEach(input => input.addEventListener('input', recalculate));
+
+    // Initial run
+    recalculate();
+
+    // Prevent double-tap zoom
+    document.querySelectorAll('a, button, input').forEach(el => {
+      el.addEventListener('touchstart', () => {}, { passive: true });
+    });
+  })();
+</script>
+</body>
+</html>

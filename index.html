@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
+  <!-- LOGO / ICONS -->
+  <link rel="icon" type="image/png" href="grape-tree-3.png">
+  <link rel="apple-touch-icon" href="grape-tree-3.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="grape-tree-1.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Till Change">
+  <meta name="theme-color" content="#ffffff">
+  
+  <title>Grape Tree · UK Till</title>
+  <style>
+    /* GLOBAL RESET & FONTS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: #f2f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 12px;
+      /* iOS safe area */
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background-color: #eef2f6;
+    }
+
+    /* MAIN CARD – APP LIKE */
+    .app-container {
+      max-width: 460px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.06);
+      padding: 28px 22px 32px;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    h1 span {
+      font-size: 1.85rem;
+    }
+
+    .subhead {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 24px;
+      font-weight: 400;
+      border-left: 3px solid #3b82f6;
+      padding-left: 10px;
+      background: #f8fafc;
+      border-radius: 0 12px 12px 0;
+      line-height: 1.3;
+      padding: 6px 12px;
+    }
+
+    /* INPUT GROUPS */
+    .input-group {
+      margin-bottom: 22px;
+    }
+
+    .input-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #334155;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+    }
+
+    .input-label span {
+      background: #e2e8f0;
+      padding: 2px 10px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .currency-input {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 4px 6px 4px 20px;
+      transition: border 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .currency-input:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      background: #ffffff;
+    }
+
+    .currency-symbol {
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: #1e293b;
+      margin-right: 6px;
+      line-height: 1;
+    }
+
+    .currency-input input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 1.8rem;
+      font-weight: 600;
+      padding: 12px 0;
+      outline: none;
+      color: #0f172a;
+      width: 100%;
+      min-width: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .currency-input input::placeholder {
+      color: #cbd5e1;
+      font-weight: 400;
+      font-size: 1.6rem;
+    }
+
+    /* hide number spinners */
+    .currency-input input[type="number"]::-webkit-outer-spin-button,
+    .currency-input input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .currency-input input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    /* DISCOUNT SECTION (new) */
+    .discount-group {
+      margin-bottom: 18px;
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 14px 18px 16px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.15s;
+    }
+
+    .discount-group .input-label {
+      margin-bottom: 12px;
+    }
+
+    .discount-group .input-label span {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .discount-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .discount-input-wrap {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 2px 6px 2px 16px;
+      transition: border 0.15s, box-shadow 0.15s;
+    }
+
+    .discount-input-wrap:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .discount-input-wrap .percent-symbol {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #475569;
+      margin-right: 4px;
+    }
+
+    .discount-input-wrap input {
+      border: none;
+      background: transparent;
+      font-size: 1.5rem;
+      font-weight: 600;
+      padding: 10px 0;
+      outline: none;
+      width: 100%;
+      min-width: 0;
+      color: #0f172a;
+    }
+
+    .discount-input-wrap input::placeholder {
+      color: #cbd5e1;
+      font-weight: 400;
+      font-size: 1.3rem;
+    }
+
+    .discount-btn {
+      flex: 1;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 12px 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .discount-btn:active {
+      background: #f1f5f9;
+      transform: scale(0.96);
+      border-color: #94a3b8;
+    }
+
+    .discount-preview {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #334155;
+      font-weight: 500;
+      background: #ffffff;
+      padding: 8px 14px;
+      border-radius: 30px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .discount-preview .saving-amount {
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .discount-preview .original-price {
+      color: #64748b;
+      text-decoration: line-through;
+      font-size: 0.9rem;
+      font-weight: 400;
+      margin-left: 8px;
+    }
+
+    /* QUICK NOTE BUTTONS */
+    .quick-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 8px;
+      justify-content: space-between;
+    }
+
+    .note-btn {
+      flex: 1 1 0;
+      min-width: 70px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 12px 6px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.12s ease;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      letter-spacing: -0.2px;
+      background: #ffffff;
+    }
+
+    .note-btn:active {
+      background: #f1f5f9;
+      transform: scale(0.96);
+      border-color: #94a3b8;
+    }
+
+    .note-btn.highlight {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+
+    /* EXACT / NO CHANGE BUTTON (new) */
+    .exact-btn {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 12px 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.12s ease;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      flex: 1 1 100%;
+      margin-top: 4px;
+      letter-spacing: 0.2px;
+    }
+
+    .exact-btn:active {
+      background: #f0fdf4;
+      transform: scale(0.97);
+      border-color: #86efac;
+    }
+
+    /* CLEAR & CALC BUTTONS */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin: 24px 0 18px;
+    }
+
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 40px;
+      padding: 18px 10px;
+      font-weight: 600;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      letter-spacing: 0.2px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary {
+      background: #1e293b;
+      color: white;
+      box-shadow: 0 8px 18px rgba(30, 41, 59, 0.2);
+    }
+
+    .btn-primary:active {
+      background: #0f172a;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:active {
+      background: #e2e8f0;
+    }
+	
+	.btn-closing {
+  width: 100%;
+  margin-top: 4px;
+  background: #16a34a;
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.25);
+}
+
+.btn-closing:active {
+  background: #15803d;
+}
+
+    /* RESULT CARD */
+    .result-card {
+      background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+      border-radius: 32px;
+      padding: 24px 22px;
+      margin-top: 10px;
+      border: 1px solid #e9eef3;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.8), 0 6px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .result-label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #475569;
+    }
+
+    .result-value {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      word-break: break-word;
+      text-align: right;
+    }
+
+    .change-value {
+      color: #0f172a;
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .change-value.positive {
+      color: #0f766e;
+    }
+
+    .change-value.negative {
+      color: #b91c1c;
+    }
+
+    .error-msg {
+      color: #b91c1c;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fee2e2;
+      padding: 10px 16px;
+      border-radius: 40px;
+    }
+
+    .success-msg {
+      color: #0f766e;
+      font-size: 0.95rem;
+      margin-top: 10px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #d1fae5;
+      padding: 10px 16px;
+      border-radius: 40px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* small tweaks */
+    .note-row {
+      margin-top: 4px;
+    }
+
+    .note-btn i {
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* iPhone specific */
+    @media (max-width: 400px) {
+      .app-container {
+        padding: 20px 16px 24px;
+        border-radius: 32px;
+      }
+      .currency-input input {
+        font-size: 1.6rem;
+        padding: 10px 0;
+      }
+      .currency-symbol {
+        font-size: 1.5rem;
+      }
+      .note-btn {
+        font-size: 1rem;
+        padding: 10px 4px;
+      }
+      .result-value {
+        font-size: 1.8rem;
+      }
+      .change-value {
+        font-size: 2.2rem;
+      }
+      .btn {
+        padding: 16px 8px;
+        font-size: 1.05rem;
+      }
+      .discount-group {
+        padding: 12px 14px 14px;
+      }
+      .discount-input-wrap input {
+        font-size: 1.3rem;
+      }
+      .discount-btn {
+        font-size: 0.9rem;
+        padding: 10px 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="logo-wrap">
+      <img src="grape-tree-3.png" alt="Grape Tree" class="app-logo">
+    </div>
+    <h1>
+      Till change
+    </h1>
+    <div class="subhead">UK grocery · quick change</div>
+	
+	<style>
+	logo-wrap {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 14px;
+	  }
+	  .app-logo {
+		width: 72px;
+		height: 72px;
+		object-fit: contain;
+		border-radius: 18px;
+		box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+		background: #ffffff;
+		padding: 6px;
+	  }
+	 
+	</style>
+
+    <!-- TOTAL PRICE INPUT -->
+    <div class="input-group">
+      <div class="input-label">
+        Total price <span>customer pays</span>
+      </div>
+      <div class="currency-input">
+        <span class="currency-symbol">£</span>
+        <input type="number" id="totalInput" placeholder="0.00" step="0.01" min="0" inputmode="decimal" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- DISCOUNT SECTION (new) -->
+    <div class="discount-group">
+      <div class="input-label">
+        Discount <span>optional</span>
+      </div>
+      <div class="discount-row">
+        <div class="discount-input-wrap">
+          <span class="percent-symbol">%</span>
+          <input type="number" id="discountInput" placeholder="0" step="1" min="0" max="100" inputmode="decimal" autocomplete="off">
+        </div>
+        <button class="discount-btn" id="applyDiscountBtn">Apply discount</button>
+      </div>
+      <div class="discount-preview hidden" id="discountPreview">
+        <span>You save <span class="saving-amount" id="savingAmount">£0.00</span></span>
+        <span class="original-price" id="originalPrice">£0.00</span>
+      </div>
+    </div>
+
+    <!-- AMOUNT GIVEN INPUT -->
+    <div class="input-group">
+      <div class="input-label">
+        Amount given <span>note handed</span>
+      </div>
+      <div class="currency-input">
+        <span class="currency-symbol">£</span>
+        <input type="number" id="givenInput" placeholder="0.00" step="0.01" min="0" inputmode="decimal" autocomplete="off">
+      </div>
+      <!-- QUICK NOTE BUTTONS -->
+      <div class="quick-notes">
+        <button class="note-btn" data-note="5">£5</button>
+        <button class="note-btn" data-note="10">£10</button>
+        <button class="note-btn" data-note="20">£20</button>
+        <button class="note-btn" data-note="50">£50</button>
+      </div>
+      <!-- NO CHANGE NEEDED BUTTON (new) -->
+      <button class="exact-btn" id="exactBtn">✓ No change needed (exact amount)</button>
+    </div>
+
+        <!-- CALCULATE + CLEAR -->
+    <div class="action-buttons">
+      <button class="btn btn-secondary" id="clearBtn">↺ Clear</button>
+      <button class="btn btn-primary" id="calcBtn">Calculate change</button>
+    </div>
+
+    <!-- CLOSING BUTTON -->
+    <a href="closing.html" class="btn btn-closing"> Closing</a>
+
+    <!-- RESULT DISPLAY -->
+    <div class="result-card" id="resultCard">
+      <div class="result-row">
+        <span class="result-label">Change due</span>
+        <span class="result-value change-value" id="changeDisplay">£0.00</span>
+      </div>
+      <div id="messageArea"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // DOM elements
+      const totalInput = document.getElementById('totalInput');
+      const givenInput = document.getElementById('givenInput');
+      const discountInput = document.getElementById('discountInput');
+      const applyDiscountBtn = document.getElementById('applyDiscountBtn');
+      const discountPreview = document.getElementById('discountPreview');
+      const savingAmount = document.getElementById('savingAmount');
+      const originalPrice = document.getElementById('originalPrice');
+      const changeDisplay = document.getElementById('changeDisplay');
+      const messageArea = document.getElementById('messageArea');
+      const calcBtn = document.getElementById('calcBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const exactBtn = document.getElementById('exactBtn');
+      const noteButtons = document.querySelectorAll('.note-btn');
+
+      // State for discount
+      let discountApplied = false;
+      let originalTotal = 0;       // total before discount (as entered)
+      let discountedTotal = 0;     // after discount
+      let currentDiscountPercent = 0;
+
+      // Helper: format as GBP currency
+      function formatCurrency(amount) {
+        return '£' + amount.toFixed(2);
+      }
+
+      // Update discount preview and optionally total
+      function applyDiscount() {
+        const totalVal = parseFloat(totalInput.value) || 0;
+        const discountPercent = parseFloat(discountInput.value);
+
+        // Validate discount
+        if (isNaN(discountPercent) || discountPercent <= 0 || discountPercent > 100) {
+          // Invalid: remove preview, reset discount state
+          discountPreview.classList.add('hidden');
+          discountApplied = false;
+          currentDiscountPercent = 0;
+          // Reset total if discount was applied before? No, keep total as entered
+          // But ensure total is not changed
+          if (originalTotal > 0 && discountApplied) {
+            // If previously applied, revert to original
+            totalInput.value = originalTotal.toFixed(2);
+          }
+          originalTotal = totalVal; // store current
+          discountedTotal = totalVal;
+          updateChange();
+          return;
+        }
+
+        // Valid discount
+        if (totalVal <= 0) {
+          // No total entered, can't apply discount
+          discountPreview.classList.add('hidden');
+          discountApplied = false;
+          currentDiscountPercent = 0;
+          updateChange();
+          return;
+        }
+
+        // Store original total before discount (if not already stored)
+        if (!discountApplied || originalTotal !== totalVal) {
+          originalTotal = totalVal;
+        }
+
+        const discountAmount = totalVal * (discountPercent / 100);
+        discountedTotal = totalVal - discountAmount;
+
+        // Update total input to discounted price
+        totalInput.value = discountedTotal.toFixed(2);
+
+        // Show preview
+        discountPreview.classList.remove('hidden');
+        savingAmount.textContent = formatCurrency(discountAmount);
+        originalPrice.textContent = formatCurrency(originalTotal);
+
+        discountApplied = true;
+        currentDiscountPercent = discountPercent;
+
+        // Update change calculation
+        updateChange();
+      }
+
+      // Reset discount when total is manually changed
+      function resetDiscountIfNeeded() {
+        if (discountApplied) {
+          // Check if current total matches discountedTotal
+          const currentTotal = parseFloat(totalInput.value) || 0;
+          if (Math.abs(currentTotal - discountedTotal) > 0.001) {
+            // User manually changed total after discount, so clear discount state
+            discountApplied = false;
+            currentDiscountPercent = 0;
+            discountPreview.classList.add('hidden');
+            originalTotal = currentTotal;
+            discountedTotal = currentTotal;
+          }
+        } else {
+          // Keep originalTotal in sync when no discount is active
+          originalTotal = parseFloat(totalInput.value) || 0;
+        }
+      }
+
+      // Update change display & message based on current inputs
+      function updateChange() {
+        // First, sync discount state with total input
+        resetDiscountIfNeeded();
+
+        const total = parseFloat(totalInput.value) || 0;
+        const given = parseFloat(givenInput.value) || 0;
+        const change = given - total;
+
+        // Clear previous message
+        messageArea.innerHTML = '';
+
+        // Update change text and colour class
+        if (given === 0 && total === 0) {
+          changeDisplay.textContent = '£0.00';
+          changeDisplay.classList.remove('positive', 'negative');
+          return;
+        }
+
+        // If given is less than total -> negative change / insufficient
+        if (change < 0) {
+          changeDisplay.textContent = formatCurrency(change);
+          changeDisplay.classList.add('negative');
+          changeDisplay.classList.remove('positive');
+          // show gentle warning
+          const warn = document.createElement('div');
+          warn.className = 'error-msg';
+          warn.innerHTML = '⚠️ Not enough money given';
+          messageArea.appendChild(warn);
+        } else {
+          changeDisplay.textContent = formatCurrency(change);
+          changeDisplay.classList.add('positive');
+          changeDisplay.classList.remove('negative');
+
+          // Special message if change is exactly 0 and both total and given are > 0
+          if (change === 0 && total > 0 && given > 0) {
+            const success = document.createElement('div');
+            success.className = 'success-msg';
+            success.innerHTML = '✓ Exact amount. No change needed.';
+            messageArea.appendChild(success);
+          }
+        }
+      }
+
+      // Calculate button handler
+      function calculateChange() {
+        // Ensure discount is applied if discount value exists
+        if (parseFloat(discountInput.value) > 0 && !discountApplied) {
+          applyDiscount();
+        } else {
+          updateChange();
+        }
+        // If given empty, set to 0 but don't auto-fill
+        // Edge: if total > given -> negative shown anyway
+      }
+
+      // Clear all inputs
+      function clearAll() {
+        totalInput.value = '';
+        givenInput.value = '';
+        discountInput.value = '';
+        changeDisplay.textContent = '£0.00';
+        changeDisplay.classList.remove('positive', 'negative');
+        messageArea.innerHTML = '';
+        discountPreview.classList.add('hidden');
+        discountApplied = false;
+        originalTotal = 0;
+        discountedTotal = 0;
+        currentDiscountPercent = 0;
+        totalInput.focus(); // ready for next customer
+      }
+
+      // Quick note buttons: set the given input to the note value
+      noteButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const noteValue = btn.getAttribute('data-note');
+          if (noteValue) {
+            givenInput.value = parseFloat(noteValue).toFixed(2);
+            // update calculation instantly
+            updateChange();
+            // subtle haptic feedback (if supported)
+            if (window.navigator.vibrate) navigator.vibrate(8);
+          }
+        });
+      });
+
+      // EXACT / NO CHANGE BUTTON: set given equal to total
+      exactBtn.addEventListener('click', () => {
+        // Ensure discount applied first if needed
+        if (parseFloat(discountInput.value) > 0 && !discountApplied) {
+          applyDiscount();
+        }
+
+        const total = parseFloat(totalInput.value) || 0;
+        if (total > 0) {
+          givenInput.value = total.toFixed(2);
+          updateChange();
+          if (window.navigator.vibrate) navigator.vibrate(10);
+        } else {
+          // If no total, show a gentle message
+          messageArea.innerHTML = '';
+          const warn = document.createElement('div');
+          warn.className = 'error-msg';
+          warn.innerHTML = '⚠️ Enter a total price first';
+          messageArea.appendChild(warn);
+          // Clear the message after 2 seconds
+          setTimeout(() => {
+            if (messageArea.firstChild && messageArea.firstChild.className === 'error-msg') {
+              messageArea.innerHTML = '';
+              updateChange();
+            }
+          }, 2000);
+        }
+      });
+
+      // Apply discount button
+      applyDiscountBtn.addEventListener('click', () => {
+        applyDiscount();
+      });
+
+      // Event listeners for inputs (live update while typing)
+      totalInput.addEventListener('input', () => {
+        // If discount is active and user edits total, reset discount state
+        if (discountApplied) {
+          const currentTotal = parseFloat(totalInput.value) || 0;
+          if (Math.abs(currentTotal - discountedTotal) > 0.001) {
+            discountApplied = false;
+            discountPreview.classList.add('hidden');
+            discountInput.value = '';
+          }
+        }
+        originalTotal = parseFloat(totalInput.value) || 0;
+        updateChange();
+      });
+
+      givenInput.addEventListener('input', updateChange);
+
+      // Also handle blur to format inputs to 2 decimals? Not necessary, but nice
+      totalInput.addEventListener('blur', function() {
+        let val = parseFloat(this.value);
+        if (!isNaN(val) && val >= 0) {
+          this.value = val.toFixed(2);
+        } else if (this.value === '') {
+          // leave empty
+        } else {
+          // invalid, reset to empty
+          this.value = '';
+        }
+        resetDiscountIfNeeded();
+        updateChange();
+      });
+
+      givenInput.addEventListener('blur', function() {
+        let val = parseFloat(this.value);
+        if (!isNaN(val) && val >= 0) {
+          this.value = val.toFixed(2);
+        } else if (this.value === '') {
+          // leave empty
+        } else {
+          this.value = '';
+        }
+        updateChange();
+      });
+
+      discountInput.addEventListener('blur', function() {
+        let val = parseFloat(this.value);
+        if (!isNaN(val) && val >= 0 && val <= 100) {
+          this.value = val.toFixed(0);
+        } else if (this.value === '') {
+          // leave empty
+        } else {
+          this.value = '';
+        }
+      });
+
+      // Button events
+      calcBtn.addEventListener('click', calculateChange);
+      clearBtn.addEventListener('click', clearAll);
+
+      // Initial update (in case of prefilled)
+      updateChange();
+
+      // Enhance: pressing "Enter" inside inputs triggers calculate
+      [totalInput, givenInput, discountInput].forEach(input => {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            calculateChange();
+            // dismiss keyboard on mobile
+            input.blur();
+          }
+        });
+      });
+
+      // Prevent double-tap zoom on buttons (iOS)
+      document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('touchstart', (e) => {
+          // do nothing, just prevent default double-tap zoom
+        }, { passive: true });
+      });
+
+      // Focus on total on load (good for quick entry)
+      window.addEventListener('load', () => {
+        totalInput.focus();
+      });
+    })();
+  </script>
+</body>
+</html>
